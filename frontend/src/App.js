@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ChatWidget from './components/ChatWidget/ChatWidget';
+import AppointmentDetails from './components/AppointmentDetails/AppointmentDetails';
 import './App.css';
 
 function HeartPulseIcon() {
@@ -13,13 +14,21 @@ function HeartPulseIcon() {
 
 function App() {
   const [chatOpenSignal, setChatOpenSignal] = useState(0);
+  const [booking, setBooking] = useState(null);
+  const [currentPage, setCurrentPage] = useState('home');
 
   const openConversation = () => {
     setChatOpenSignal((signal) => signal + 1);
   };
 
+  const returnToAssistant = () => {
+    setCurrentPage('home');
+    setChatOpenSignal((signal) => signal + 1);
+  };
+
   return (
-    <main className="portal-shell">
+    <>
+      <main className="portal-shell">
       <div
         className="hero-image"
         style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/healthcare.png)` }}
@@ -65,8 +74,18 @@ function App() {
         <span><strong>Care that listens</strong><br />Guidance begins with a conversation.</span>
       </aside>
 
-      <ChatWidget openSignal={chatOpenSignal} />
-    </main>
+      <ChatWidget
+        openSignal={chatOpenSignal}
+        booking={booking}
+        onBookingChange={setBooking}
+        onViewAppointment={() => setCurrentPage('appointment')}
+        isPageActive={currentPage === 'home'}
+      />
+      </main>
+      {currentPage === 'appointment' && booking && (
+        <AppointmentDetails booking={booking} onBack={returnToAssistant} />
+      )}
+    </>
   );
 }
 
